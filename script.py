@@ -45,13 +45,14 @@ products = image_elements.find_elements(By.TAG_NAME, "li")
 for product in products:
     imgs = product.find_elements(By.TAG_NAME, "img")
     for i, img in enumerate(imgs):
-        urls = str(img.get_attribute("srcset"))
-        url = re.findall(r'https.*?jpg', urls)
-        print(url)
-        #response = requests.get(urls)
-        #number = randrange(1337)
-        #with open(f"download_dir/image_{number}.jpg", "wb") as f:
-        #    f.write(response.content)
+        urls_block = str(img.get_attribute("srcset"))
+        urls = re.findall(r'https.*?jpg', urls_block)
+        if urls:
+            url = urls[-1]
+            name = re.findall(r"/([^/]+)\.jpg$", url)[0]
+            response = requests.get(url)
+            with open(f"download_dir/{name}.jpg", "wb") as f:
+                f.write(response.content)
 
 
 # close the browser
